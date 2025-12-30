@@ -7,14 +7,15 @@ import { configs } from "./config";
 
 const app: Application = express();
 
+app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json());
 app.use(
   cors({
     origin: configs.APP_URL,
+    methods: ["GET", "DELETE", "POST", "PUT"],
     credentials: true,
   })
 );
-app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use("/post", postRouter);
 

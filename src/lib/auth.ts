@@ -121,22 +121,33 @@ export const auth = betterAuth({
         </html>
       `,
         });
-        console.log({
-          success: true,
-          message: "Verification email sent successfully",
-          recipient: user.email,
-          messageId: info.messageId,
-        });
+        // console.log({
+        //   success: true,
+        //   message: "Verification email sent successfully",
+        //   recipient: user.email,
+        //   messageId: info.messageId,
+        // });
       } catch (error) {
         console.error("Critical: Email service failed", error);
       }
     },
   },
+  debug: true,
   baseURL: configs.BETTER_AUTH_URL,
+
   socialProviders: {
     google: {
       clientId: configs.GOOGLE_CLIENT_ID as string,
       clientSecret: configs.GOOGLE_CLIENT_SECRET as string,
+      accessType: "offline",
+      prompt: "select_account consent",
+    },
+    facebook: {
+      clientId: configs.FACEBOOK_CLIENT_ID as string,
+      clientSecret: configs.FACEBOOK_CLIENT_SECRET as string,
+      scopes: ["email", "public_profile", "user_friends"], // Overwrites permissions
+      fields: ["user_friends"], // Extending list of fields
     },
   },
 });
+// console.log(auth);

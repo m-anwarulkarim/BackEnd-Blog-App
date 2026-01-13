@@ -5,6 +5,9 @@ import { auth } from "./lib/auth";
 import cors from "cors";
 import { configs } from "./config";
 import redisClient from "./lib/redis";
+import { notFound } from "./middleware/notFound";
+import { commentRouter } from "./module/comment/comment.route";
+import { authRouter } from "./module/auth/auth.route";
 
 const app: Application = express();
 
@@ -18,7 +21,9 @@ app.use(
   })
 );
 
-app.use("/post", postRouter);
+app.use("/posts", postRouter);
+app.use("/comments", commentRouter);
+app.use("/users", authRouter);
 
 app.get("/test-redis", async (req: Request, res: Response) => {
   try {
@@ -52,14 +57,5 @@ app.get("/", (req: Request, res: Response) => {
     },
   });
 });
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: "Requested route not found",
-    error: {
-      path: req.originalUrl,
-      method: req.method,
-    },
-  });
-});
+app.use(notFound);
 export default app;

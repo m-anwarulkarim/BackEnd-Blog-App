@@ -1,12 +1,33 @@
-import express from "express";
-import { postController } from "./post.controller";
-import authGurd from "../../middleware/authGurd";
+import express, { Router } from "express";
+import { PostController } from "./post.controller";
 import { ROLE } from "../../types/role.type";
+import authGurd from "../../middleware/authGurd";
 
 const router = express.Router();
 
-router.post("/", authGurd(ROLE.ADMIN, ROLE.USER), postController.createPost);
-router.get("/", authGurd(ROLE.ADMIN, ROLE.USER), postController.getAllPost);
-router.get("/", authGurd(ROLE.ADMIN, ROLE.USER), postController.getSinglePost);
+router.get("/", PostController.getAllPost);
+router.get("/stats", authGurd(ROLE.ADMIN), PostController.getStats);
 
-export const postRouter = router;
+router.get(
+  "/my-posts",
+  authGurd(ROLE.USER, ROLE.ADMIN),
+  PostController.getMyPosts
+);
+
+router.get("/:postId", PostController.getPostById);
+
+router.post("/", authGurd(ROLE.USER, ROLE.ADMIN), PostController.createPost);
+
+router.patch(
+  "/:postId",
+  authGurd(ROLE.USER, ROLE.ADMIN),
+  PostController.updatePost
+);
+
+router.delete(
+  "/:postId",
+  authGurd(ROLE.USER, ROLE.ADMIN),
+  PostController.deletePost
+);
+
+export const postRouter: Router = router;
